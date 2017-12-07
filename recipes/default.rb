@@ -66,7 +66,13 @@ acme_selfsigned "#{site}" do
 end
 
 # Set up your webserver here...
-node.set['nginx']['port'] = node['centos-nginx-acme']['http_port']
+http_port = node['centos-nginx-acme']['http_port']
+node.set['nginx']['port'] = http_port
+
+# inform SELinux to allow nginx to use the requested http_port
+execute "Allow port #{http_port} binding" do
+  command "semanage port -a -t http_port_t -p tcp #{http_port}"
+end
 
 include_recipe 'nginx'
 
