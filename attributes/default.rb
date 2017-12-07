@@ -1,0 +1,4 @@
+default['centos-nginx-acme'] =
+{
+
+}
