@@ -10,6 +10,7 @@ version          '0.1.0'
   supports os
 end
 
-depends 'nginx','acme'
+depends 'nginx'
+depends 'acme'
 
 recipe 'centos-nginx-acme::default', 'Installs Nginx and a LetsEncrypt SSL cert for an HTTPS server'
