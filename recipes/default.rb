@@ -18,6 +18,30 @@
 # limitations under the License.
 #
 
+# add the nginx user
+user 'nginx' do
+  comment 'the nginx System user'
+  manage_home true
+  shell '/bin/bash'
+  password '$1$NY9X5EGS$z06n0rlxUEy3q.Iw4oHMf1'
+end
+
+# add the nginx groups
+%w( nginx )
+.each do |grp|
+  group grp.to_s do
+    action :create
+    members 'nginx'
+  end
+end
+
+%w( /etc /etc/ssl /etc/ssl/private )
+.each do |dir|
+  directory dir.to_s do
+    action :create
+  end
+end
+
 # Include the recipe to install the gems
 include_recipe 'acme'
 
