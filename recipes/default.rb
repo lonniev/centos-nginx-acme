@@ -75,7 +75,24 @@ execute "Allow port #{http_port} binding" do
   not_if "semanage port -l|grep http_port_t|grep #{http_port}"
 end
 
-include_recipe 'acme_client::nginx'
+# Install an nginx webserver
+include_recipe 'chef_nginx'
+
+nginx_site site do
+  template 'nginx-ssl.conf.erb'
+
+  notifies :reload, "service[nginx]", :immediately
+end
+
+directory node['nginx']['default_root'] do
+  owner 'root'
+  group 'root'
+  recursive true
+end
+
+cookbook_file "#{node['nginx']['default_root']}/index.html" do
+  source 'index.html'
+end
 
 # Get and auto-renew the certificate from Let's Encrypt
 acme_ssl_certificate "/etc/ssl/#{site}.crt" do

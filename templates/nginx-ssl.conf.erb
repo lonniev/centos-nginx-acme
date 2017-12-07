@@ -1,0 +1,32 @@
+server {
+
+  listen   <%= node['nginx']['port'] %> default_server;
+
+  server_name <%= node['nginx']['site'] %>;
+  access_log /var/log/nginx/localhost.access.log;
+  error_log /var/log/nginx/localhost.error.log;
+
+  location / {
+    root   /var/www/nginx-default;
+    index  index.html;
+  }
+}
+
+
+server {
+
+  listen   443 default_server;
+
+  ssl    on;
+  ssl_certificate     /etc/ssl/<%= node['nginx']['site'] %>.crt;
+  ssl_certificate_key /etc/ssl/<%= node['nginx']['site'] %>.key;
+
+  server_name <%= node['nginx']['site'] %>;
+  access_log /var/log/nginx/localhost.access.log;
+  error_log /var/log/nginx/localhost.error.log;
+
+  location / {
+    root   /var/www/nginx-default;
+    index  index.html;
+  }
+}
