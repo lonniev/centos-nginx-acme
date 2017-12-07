@@ -75,15 +75,19 @@ execute "Allow port #{http_port} binding" do
   not_if "semanage port -l|grep http_port_t|grep #{http_port}"
 end
 
-include_recipe 'nginx'
+include_recipe 'acme_client::nginx'
 
 # Get and auto-renew the certificate from Let's Encrypt
 acme_ssl_certificate "/etc/ssl/#{site}.crt" do
   cn                site
   alt_names         sans
-  output            :crt # or :fullchain
-  key               "/etc/ssl/private/#{site}.pem"
+  output            :fullchain
+  key               "/etc/ssl/#{site}.key"
   min_validity      30 #Renew certificate if expiry is closed than this many days
 
   webserver         :nginx
+
+  notifies  :reload, 'service[nginx]'
+
+  owner 'nginx'
 end

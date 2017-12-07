@@ -10,5 +10,5 @@ version          '0.1.0'
   supports os
 end
 
-depends 'nginx'
+depends 'chef_nginx'
 depends 'acme'
