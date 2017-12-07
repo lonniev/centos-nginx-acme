@@ -66,6 +66,8 @@ acme_selfsigned "#{site}" do
 end
 
 # Set up your webserver here...
+node.set['nginx']['port'] = node['centos-nginx-acme']['http_port']
+
 include_recipe 'nginx'
 
 # Get and auto-renew the certificate from Let's Encrypt
