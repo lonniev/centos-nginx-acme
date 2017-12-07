@@ -63,7 +63,6 @@ acme_selfsigned "#{site}" do
   owner   "nginx"
   group   "nginx"
   cn      site
-  notifies :restart, "service[nginx]", :immediate
 end
 
 # Set up your webserver here...
