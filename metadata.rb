@@ -12,5 +12,3 @@ end
 
 depends 'nginx'
 depends 'acme'
-
-recipe 'centos-nginx-acme::default', 'Installs Nginx and a LetsEncrypt SSL cert for an HTTPS server'
