@@ -67,19 +67,23 @@ end
 
 # Set up your webserver here...
 http_port = node['centos-nginx-acme']['http_port']
+https_port = node['centos-nginx-acme']['https_port']
 node.set['nginx']['port'] = http_port
+node.set['nginx']['ssl_port'] = https_port
 
-# inform SELinux to allow nginx to use the requested http_port
-execute "Allow port #{http_port} binding" do
-  command "semanage port -a -t http_port_t -p tcp #{http_port}"
-  not_if "semanage port -l|grep http_port_t|grep #{http_port}"
-end
+# inform SELinux to allow nginx to use the requested http supports
+%w( http_port https_port ).each { |port|
+  execute "Allow port #{port} binding" do
+    command "semanage port -a -t http_port_t -p tcp #{port}"
+    not_if "semanage port -l|grep http_port_t|grep #{port}"
+  end
+}
 
 # Install an nginx webserver
 include_recipe 'chef_nginx'
 
 nginx_site site do
-  template 'nginx-ssl.conf.erb'
+  template 'ssl-site.erb'
 
   notifies :reload, "service[nginx]", :immediately
 end
