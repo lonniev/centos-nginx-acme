@@ -21,12 +21,14 @@
 # Include the recipe to install the gems
 include_recipe 'acme'
 
+contact_email = node['centos-nginx-acme']["contact_email"]
+
 # Set up contact information. Note the mailto: notation
-node.set['acme']['contact'] = ['mailto:me@example.com']
+node.set['acme']['contact'] = ["mailto:#{contact_email}"]
 # Real certificates please...
 node.set['acme']['endpoint'] = 'https://acme-v01.api.letsencrypt.org'
 
-site = "example.com"
+site = node['centos-nginx-acme']["site"]
 sans = ["www.#{site}"]
 
 # Generate a self-signed if we don't have a cert to prevent bootstrap problems
