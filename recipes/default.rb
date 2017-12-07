@@ -72,6 +72,7 @@ node.set['nginx']['port'] = http_port
 # inform SELinux to allow nginx to use the requested http_port
 execute "Allow port #{http_port} binding" do
   command "semanage port -a -t http_port_t -p tcp #{http_port}"
+  not_if "semanage port -l|grep http_port_t|grep #{http_port}"
 end
 
 include_recipe 'nginx'
