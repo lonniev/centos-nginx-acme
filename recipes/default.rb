@@ -59,9 +59,10 @@ sans = ["www.#{site}"]
 acme_selfsigned "#{site}" do
   crt     "/etc/ssl/#{site}.crt"
   key     "/etc/ssl/#{site}.key"
-  chain    "/etc/ssl/private/#{site}.pem"
+  chain   "/etc/ssl/private/#{site}.pem"
   owner   "nginx"
   group   "nginx"
+  cn      site
   notifies :restart, "service[nginx]", :immediate
 end
 
