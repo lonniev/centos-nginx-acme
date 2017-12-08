@@ -2,7 +2,7 @@ server {
 
   listen   <%= node['nginx']['port'] %> default_server;
 
-  server_name <%= node['centos-nginx-acme']['site'] %>;
+  server_name <%= node['centos-nginx-acme']['external_site'] %>;
 
   return 301 https://$http_host$request_uri;
 }
@@ -12,17 +12,17 @@ server {
   listen   <%= node['nginx']['ssl_port'] %> default_server;
 
   ssl    on;
-  ssl_certificate     /etc/ssl/<%= node['centos-nginx-acme']['site'] %>.crt;
-  ssl_certificate_key /etc/ssl/<%= node['centos-nginx-acme']['site'] %>.key;
+  ssl_certificate     /etc/ssl/<%= node['centos-nginx-acme']['external_site'] %>.crt;
+  ssl_certificate_key /etc/ssl/<%= node['centos-nginx-acme']['external_site'] %>.key;
 
-  server_name <%= node['centos-nginx-acme']['site'] %>;
+  server_name <%= node['centos-nginx-acme']['external_site'] %>;
 
-  access_log /var/log/nginx/<%= node['centos-nginx-acme']['site'] %>.access.log;
-  error_log /var/log/nginx/<%= node['centos-nginx-acme']['site'] %>.error.log;
+  access_log /var/log/nginx/<%= node['centos-nginx-acme']['external_site'] %>.access.log;
+  error_log /var/log/nginx/<%= node['centos-nginx-acme']['external_site'] %>.error.log;
 
   location / {
 
-    proxy_pass         http://127.0.0.1:80;
+    proxy_pass         http://127.0.0.1:<%= node['centos-nginx-acme']['internal_port'] %>;
 
     proxy_set_header   Host $host;
     proxy_set_header   X-Real-IP $remote_addr;
@@ -33,5 +33,9 @@ server {
 
     proxy_read_timeout  1200s;
 
+    sub_filter "http://<%= node['centos-nginx-acme']['internal_site'] %>(:<%= node['centos-nginx-acme']['internal_port'] %>)?" "http://<%= node['centos-nginx-acme']['external_site'] %>:<%= node['nginx']['ssl_port'] %>" ;
+    sub_filter_once off;
+    sub_filter_last_modified on;
+    sub_filter_types *;
   }
 }

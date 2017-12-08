@@ -52,7 +52,7 @@ node.set['acme']['contact'] = ["mailto:#{contact_email}"]
 # Real certificates please...
 node.set['acme']['endpoint'] = 'https://acme-v01.api.letsencrypt.org'
 
-site = node['centos-nginx-acme']["site"]
+site = node['centos-nginx-acme']["external_site"]
 site_aliases = node['centos-nginx-acme']["aliases"]
 
 # Generate a self-signed if we don't have a cert to prevent bootstrap problems
@@ -66,8 +66,8 @@ acme_selfsigned "#{site}" do
 end
 
 # Set up your webserver here...
-http_port = node['centos-nginx-acme']['http_port']
-https_port = node['centos-nginx-acme']['https_port']
+http_port = node['centos-nginx-acme']['external_http_port']
+https_port = node['centos-nginx-acme']['external_https_port']
 node.set['nginx']['port'] = http_port
 node.set['nginx']['ssl_port'] = https_port
 
@@ -81,6 +81,9 @@ node.set['nginx']['ssl_port'] = https_port
 
 # Install an nginx webserver
 include_recipe 'chef_nginx'
+
+node.run_state['nginx_configure_flags'] =
+  node.run_state['nginx_configure_flags'] | ['--with-http_sub_module']
 
 nginx_site site do
   template 'ssl-site.erb'
