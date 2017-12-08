@@ -3,13 +3,8 @@ server {
   listen   <%= node['nginx']['port'] %> default_server;
 
   server_name <%= node['centos-nginx-acme']['site'] %>;
-  access_log /var/log/nginx/localhost.access.log;
-  error_log /var/log/nginx/localhost.error.log;
 
-  location / {
-    root   /var/www/nginx-default;
-    index  index.html;
-  }
+  return 301 https://$http_host$request_uri;
 }
 
 server {
@@ -21,11 +16,22 @@ server {
   ssl_certificate_key /etc/ssl/<%= node['centos-nginx-acme']['site'] %>.key;
 
   server_name <%= node['centos-nginx-acme']['site'] %>;
-  access_log /var/log/nginx/localhost.access.log;
-  error_log /var/log/nginx/localhost.error.log;
+
+  access_log /var/log/nginx/<%= node['centos-nginx-acme']['site'] %>.access.log;
+  error_log /var/log/nginx/<%= node['centos-nginx-acme']['site'] %>.error.log;
 
   location / {
-    root   /var/www/nginx-default;
-    index  index.html;
+
+    proxy_pass         http://127.0.0.1:80;
+
+    proxy_set_header   Host $host;
+    proxy_set_header   X-Real-IP $remote_addr;
+    proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header   X-Forwarded-Host $server_name;
+
+    proxy_set_header   X-Forwarded-Proto https;
+
+    proxy_read_timeout  1200s;
+
   }
 }
