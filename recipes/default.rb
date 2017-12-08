@@ -53,7 +53,7 @@ node.set['acme']['contact'] = ["mailto:#{contact_email}"]
 node.set['acme']['endpoint'] = 'https://acme-v01.api.letsencrypt.org'
 
 site = node['centos-nginx-acme']["site"]
-sans = ["www.#{site}"]
+site_aliases = node['centos-nginx-acme']["aliases"]
 
 # Generate a self-signed if we don't have a cert to prevent bootstrap problems
 acme_selfsigned "#{site}" do
@@ -101,7 +101,7 @@ end
 # Get and auto-renew the certificate from Let's Encrypt
 acme_ssl_certificate "/etc/ssl/#{site}.crt" do
   cn                site
-  alt_names         sans
+  alt_names         site_aliases
   output            :fullchain
   key               "/etc/ssl/#{site}.key"
   min_validity      30 #Renew certificate if expiry is closed than this many days
