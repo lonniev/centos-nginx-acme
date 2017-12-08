@@ -4,7 +4,7 @@ server {
 
   server_name <%= node['centos-nginx-acme']['external_site'] %>;
 
-  return 301 https://$http_host$request_uri;
+  return 301 https://<%= node['centos-nginx-acme']['external_site'] %>:<%= node['nginx']['ssl_port'] %>$request_uri;
 }
 
 server {
@@ -33,7 +33,7 @@ server {
 
     proxy_read_timeout  1200s;
 
-    sub_filter "http://<%= node['centos-nginx-acme']['internal_site'] %>(:<%= node['centos-nginx-acme']['internal_port'] %>)?" "http://<%= node['centos-nginx-acme']['external_site'] %>:<%= node['nginx']['ssl_port'] %>" ;
+    sub_filter "http://<%= node['centos-nginx-acme']['internal_site'] %>(:<%= node['centos-nginx-acme']['internal_port'] %>)?" "https://<%= node['centos-nginx-acme']['external_site'] %>:<%= node['nginx']['ssl_port'] %>" ;
     sub_filter_once off;
     sub_filter_last_modified on;
     sub_filter_types *;
