@@ -85,6 +85,9 @@ include_recipe 'chef_nginx'
 node.run_state['nginx_configure_flags'] =
   node.run_state['nginx_configure_flags'] | ['--with-http_sub_module']
 
+node.run_state['nginx_configure_flags'] =
+  node.run_state['nginx_configure_flags'] | ['--with-http_upstream_module']
+
 nginx_site site do
   template 'ssl-site.erb'
 
@@ -118,4 +121,8 @@ acme_ssl_certificate "/etc/ssl/#{site}.crt" do
   notifies  :reload, 'service[nginx]'
 
   owner 'nginx'
+end
+
+nginx_site site do
+  action :disable
 end

@@ -1,15 +1,10 @@
-server {
-
-  listen   <%= node['nginx']['port'] %> default_server;
-
-  server_name <%= node['centos-nginx-acme']['external_site'] %>;
-
-  return 301 https://<%= node['centos-nginx-acme']['external_site'] %>:<%= node['nginx']['ssl_port'] %>$request_uri;
+upstream windchill_inside {
+  server 127.0.0.1:<%= node['centos-nginx-acme']['internal_port'] %>;
 }
 
 server {
 
-  listen   <%= node['nginx']['ssl_port'] %> default_server;
+  listen   <%= node['nginx']['ssl_port'] %> ssl;
 
   ssl    on;
   ssl_certificate     /etc/ssl/<%= node['centos-nginx-acme']['external_site'] %>.crt;
@@ -22,7 +17,7 @@ server {
 
   location / {
 
-    proxy_pass         http://127.0.0.1:<%= node['centos-nginx-acme']['internal_port'] %>;
+    proxy_pass         http://windchill_inside;
 
     proxy_set_header   Host $host;
     proxy_set_header   X-Real-IP $remote_addr;
