@@ -1,5 +1,5 @@
-upstream windchill_inside {
-  server 127.0.0.1:<%= node['centos-nginx-acme']['internal_port'] %>;
+upstream upstream_host {
+  server <%= node['centos-nginx-acme']['upstream_site'] %>:<%= node['centos-nginx-acme']['upstream_port'] %>;
 }
 
 server {
@@ -17,7 +17,7 @@ server {
 
   location / {
 
-    proxy_pass         http://windchill_inside;
+    proxy_pass         http://upstream_host;
 
     proxy_set_header   Host $host;
     proxy_set_header   X-Real-IP $remote_addr;
@@ -28,7 +28,7 @@ server {
 
     proxy_read_timeout  1200s;
 
-    sub_filter "http://<%= node['centos-nginx-acme']['internal_site'] %>(:<%= node['centos-nginx-acme']['internal_port'] %>)?" "https://<%= node['centos-nginx-acme']['external_site'] %>:<%= node['nginx']['ssl_port'] %>" ;
+    sub_filter "http://<%= node['centos-nginx-acme']['upstream_site'] %>(:<%= node['centos-nginx-acme']['upstream_port'] %>)?" "https://<%= node['centos-nginx-acme']['external_site'] %>:<%= node['nginx']['ssl_port'] %>" ;
     sub_filter_once off;
     sub_filter_last_modified on;
     sub_filter_types *;
