@@ -94,10 +94,6 @@ nginx_site site do
   notifies :reload, "service[nginx]", :immediately
 end
 
-nginx_site "default" do
-  action :disable
-end
-
 directory node['nginx']['default_root'] do
   owner 'root'
   group 'root'
@@ -121,8 +117,4 @@ acme_ssl_certificate "/etc/ssl/#{site}.crt" do
   notifies  :reload, 'service[nginx]'
 
   owner 'nginx'
-end
-
-nginx_site site do
-  action :disable
 end
