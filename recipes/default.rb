@@ -87,7 +87,7 @@ node.set['nginx']['configure_flags'] = %W(
   --with-http_upstream_module
 )
 
-nginx_site site do
+nginx_site "#{site}" do
   template 'ssl-site.erb'
 
   notifies :reload, "service[nginx]", :immediately
