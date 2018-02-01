@@ -82,11 +82,10 @@ node.set['nginx']['ssl_port'] = https_port
 # Install an nginx webserver
 include_recipe 'chef_nginx'
 
-node.run_state['nginx_configure_flags'] =
-  node.run_state['nginx_configure_flags'] | ['--with-http_sub_module']
-
-node.run_state['nginx_configure_flags'] =
-  node.run_state['nginx_configure_flags'] | ['--with-http_upstream_module']
+node['nginx']['configure_flags'] = %W(
+  --with-http_sub_module
+  --with-http_upstream_module
+)
 
 nginx_site site do
   template 'ssl-site.erb'
