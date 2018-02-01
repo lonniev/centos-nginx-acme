@@ -82,7 +82,7 @@ node.set['nginx']['ssl_port'] = https_port
 # Install an nginx webserver
 include_recipe 'chef_nginx'
 
-node['nginx']['configure_flags'] = %W(
+node.set['nginx']['configure_flags'] = %W(
   --with-http_sub_module
   --with-http_upstream_module
 )
