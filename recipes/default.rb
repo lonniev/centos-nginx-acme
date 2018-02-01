@@ -105,7 +105,7 @@ end
 
 # Get and auto-renew the certificate from Let's Encrypt
 acme_ssl_certificate "/etc/ssl/#{site}.crt" do
-  cn                site
+  cn                "#{site}"
   alt_names         site_aliases
   output            :fullchain
   key               "/etc/ssl/#{site}.key"
