@@ -71,7 +71,6 @@ https_port = node['centos-nginx-acme']['external_https_port']
 node.set['nginx']['port'] = http_port
 node.set['nginx']['ssl_port'] = https_port
 
-unless node['centos-nginx-acme']['skipSemanage']
 do
   # inform SELinux to allow nginx to use the requested http supports
   [ http_port, https_port ].each { |port|
@@ -80,7 +79,7 @@ do
       not_if "semanage port -l|grep http_port_t|grep #{port}"
     end
   }
-end
+end unless node['centos-nginx-acme']['skipSemanage']
 
 # Install an nginx webserver
 include_recipe 'chef_nginx'
