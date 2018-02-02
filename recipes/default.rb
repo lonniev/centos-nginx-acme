@@ -56,13 +56,12 @@ site = node['centos-nginx-acme']["external_site"]
 site_aliases = node['centos-nginx-acme']["aliases"]
 
 # Generate a self-signed if we don't have a cert to prevent bootstrap problems
-acme_selfsigned "#{site}" do
+acme_selfsigned site do
   crt     "/etc/ssl/#{site}.crt"
   key     "/etc/ssl/#{site}.key"
   chain   "/etc/ssl/private/#{site}.pem"
   owner   "nginx"
   group   "nginx"
-  cn      site
 end
 
 # Set up your webserver here...
@@ -71,14 +70,14 @@ https_port = node['centos-nginx-acme']['external_https_port']
 node.set['nginx']['port'] = http_port
 node.set['nginx']['ssl_port'] = https_port
 
- unless node['centos-nginx-acme']['skipSemanage']
-  # inform SELinux to allow nginx to use the requested http supports
-  [ http_port, https_port ].each { |port|
-    execute "Allow port #{port} binding" do
-      command "semanage port -a -t http_port_t -p tcp #{port}"
-      not_if "semanage port -l|grep http_port_t|grep #{port}"
-    end
-  }
+unless node['centos-nginx-acme']['skipSemanage']
+   # inform SELinux to allow nginx to use the requested http supports
+   [ http_port, https_port ].each { |port|
+     execute "Allow port #{port} binding" do
+       command "semanage port -a -t http_port_t -p tcp #{port}"
+       not_if "semanage port -l|grep http_port_t|grep #{port}"
+     end
+   }
 end
 
 # Install an nginx webserver
@@ -89,7 +88,7 @@ node.set['nginx']['configure_flags'] = %W(
   --with-http_upstream_module
 )
 
-nginx_site "#{site}" do
+nginx_site site do
   template 'ssl-site.erb'
 
   notifies :reload, "service[nginx]", :immediately
@@ -107,11 +106,13 @@ end
 
 # Get and auto-renew the certificate from Let's Encrypt
 acme_ssl_certificate "/etc/ssl/#{site}.crt" do
-  cn                "#{site}"
+  cn                site
   alt_names         site_aliases
   output            :fullchain
   key               "/etc/ssl/#{site}.key"
   min_validity      30 #Renew certificate if expiry is closed than this many days
+
+  validation_method Acme::Client::Resources::Challenges::TLSSNI01
 
   webserver         :nginx
 
