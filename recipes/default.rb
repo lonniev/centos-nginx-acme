@@ -112,7 +112,7 @@ acme_ssl_certificate "/etc/ssl/#{site}.crt" do
   key               "/etc/ssl/#{site}.key"
   min_validity      30 #Renew certificate if expiry is closed than this many days
 
-  validation_method Acme::Client::Resources::Challenges::TLSSNI01
+  validation_method :tls_sni01
 
   webserver         :nginx
 
