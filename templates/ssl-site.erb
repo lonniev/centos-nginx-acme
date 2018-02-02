@@ -1,6 +1,6 @@
-upstream upstream_host {
-  server <%= node['centos-nginx-acme']['upstream_site'] %>:<%= node['centos-nginx-acme']['upstream_port'] %>;
-}
+# upstream upstream_host {
+#  server <%= node['centos-nginx-acme']['upstream_site'] %>:<%= node['centos-nginx-acme']['upstream_port'] %>;
+# }
 
 server {
 
@@ -15,22 +15,22 @@ server {
   access_log /var/log/nginx/<%= node['centos-nginx-acme']['external_site'] %>.access.log;
   error_log /var/log/nginx/<%= node['centos-nginx-acme']['external_site'] %>.error.log;
 
-  location / {
-
-    proxy_pass         http://upstream_host;
-
-    proxy_set_header   Host $host;
-    proxy_set_header   X-Real-IP $remote_addr;
-    proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header   X-Forwarded-Host $server_name;
-
-    proxy_set_header   X-Forwarded-Proto https;
-
-    proxy_read_timeout  1200s;
-
-    sub_filter "http://<%= node['centos-nginx-acme']['upstream_site'] %>(:<%= node['centos-nginx-acme']['upstream_port'] %>)?" "https://<%= node['centos-nginx-acme']['external_site'] %>:<%= node['nginx']['ssl_port'] %>" ;
-    sub_filter_once off;
-    sub_filter_last_modified on;
-    sub_filter_types *;
-  }
+#  location / {
+#
+#    proxy_pass         http://upstream_host;
+#
+#    proxy_set_header   Host $host;
+#    proxy_set_header   X-Real-IP $remote_addr;
+#    proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+#    proxy_set_header   X-Forwarded-Host $server_name;
+#
+#    proxy_set_header   X-Forwarded-Proto https;
+#
+#   proxy_read_timeout  1200s;
+#
+#    sub_filter "http://<%= node['centos-nginx-acme']['upstream_site'] %>(:<%= node['centos-nginx-acme']['upstream_port'] %>)?" "https://<%= node['centos-nginx-acme']['external_site'] %>:<%= node['nginx']['ssl_port'] %>" ;
+#    sub_filter_once off;
+#    sub_filter_last_modified on;
+#    sub_filter_types *;
+#  }
 }
